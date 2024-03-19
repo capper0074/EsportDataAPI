@@ -8,6 +8,58 @@ def player_analysis_mean(stats):
 
     return avg_stats
 
+
+def map_sorter(maps_played):
+    maps = {
+        "Mirage": 0,
+        "Vertigo": 0,
+        "Ancient": 0,
+        "Overpass": 0,
+        "Nuke": 0,
+        "Inferno": 0,
+        "Anubis": 0
+    }
+
+    for map in maps_played:
+        if map == 0:
+            maps["Mirage"] += 1
+        elif map == 1:
+            maps["Vertigo"] += 1
+        elif map == 2:
+            maps["Ancient"] += 1
+        elif map == 3:
+            maps["Overpass"] += 1
+        elif map == 4:
+            maps["Nuke"] += 1
+        elif map == 5:
+            maps["Inferno"] += 1
+        elif map == 6:
+            maps["Anubis"] += 1
+
+    return maps
+
+
+def map_analysis_frequency_percentage(map_frequency):
+
+    if not isinstance(map_frequency, dict):
+        raise TypeError("Input 'frequency' must be a dictionary.")
+
+    categories = ['Mirage', 'Vertigo', 'Ancient', 'Overpass', 'Nuke', 'Inferno', 'Anubis']
+    for key in categories:
+        map_frequency.setdefault(key, 0)
+
+    frequency_sum = sum(map_frequency.values())
+
+    if frequency_sum == 0:
+        raise ValueError("Sum of frequencies is zero.")
+
+    map_frequency_per = []
+    for key in categories:
+        x = (map_frequency[key] / frequency_sum) * 100
+        map_frequency_per.append(x)
+
+    return map_frequency_per
+
 def player_analysis_frequency(stats):
 
     frequency = {
@@ -38,6 +90,25 @@ def player_analysis_frequency(stats):
 
     return frequency
 
+
 def player_analysis_frequency_percentage(frequency):
-    frequency_sum = sum(frequency)
-    list_freq = [frequency['30+'], frequency['25-30'], frequency['20-25'], frequency['15-20'], frequency['10-15'], frequency['5-10'], frequency['0-5']]
+
+    if not isinstance(frequency, dict):
+        raise TypeError("Input 'frequency' must be a dictionary.")
+
+    categories = ['30+', '25-30', '20-25', '15-20', '10-15', '5-10', '0-5']
+    for key in categories:
+        frequency.setdefault(key, 0)
+
+    frequency_sum = sum(frequency.values())
+
+    if frequency_sum == 0:
+        raise ValueError("Sum of frequencies is zero.")
+
+    frequency_per = []
+    for key in categories:
+        x = (frequency[key] / frequency_sum) * 100
+        frequency_per.append(x)
+
+    return frequency_per
+
