@@ -38,13 +38,25 @@ def get_user():
     kills = user_data["kills"]
     assists = user_data["assists"]
     deaths = user_data["deaths"]
+    headshots = user_data["headshots"]
+    match_wins = user_data["Wins"]
+    match_loss = user_data["Loss"]
 
     # Beregn killavg
-    killavg = Analysis.player_analysis_mean(kills)
+    kill_avg = Analysis.player_analysis_mean(kills)
+    death_avg = Analysis.player_analysis_mean(deaths)
+    assist_avg = Analysis.player_analysis_mean(assists)
+    headshot_per = Analysis.player_headshot_per(kills, headshots)
+    win_per = Analysis.player_match_win_per(match_wins, match_loss)
 
     # Opret svar-objekt med de modtagne data og beregnede killavg
     response_data = {
-        "killavg": killavg
+        "username": name,
+        "kill_avg": kill_avg,
+        "death_avg": death_avg,
+        "assist_avg": assist_avg,
+        "headshot_per": headshot_per,
+        "win_per": win_per
     }
 
     # Returner data som JSON

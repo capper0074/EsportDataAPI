@@ -112,3 +112,21 @@ def player_analysis_frequency_percentage(frequency):
 
     return frequency_per
 
+
+def player_match_win_per(wins, loss):
+    total_matches = wins + loss
+
+    win_per = total_matches / wins * 100
+
+    return win_per
+
+
+def player_headshot_per(kills, headshots):
+    headshot_per = kills / headshots * 100
+
+    return headshot_per
+
+
+
+
+
