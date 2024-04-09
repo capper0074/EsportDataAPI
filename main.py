@@ -1,52 +1,35 @@
-from flask import Flask, request, jsonify
-
 import Analysis
 import Repo
 
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, status, HTTPException
 
 app = FastAPI()
 
 
-def fetch_user_data_from_database(userid, mapname):
-    connection = Repo.connect_to_database()
-    cursor = connection.cursor()
-    query = """SELECT id, mapname FROM placeholder WHERE id = %s AND mapname = %s"""
-    cursor.execute(query, (userid, mapname))
-    cursor.execute(query, (userid,))
-    user_data = cursor.fetchone()  #Skal nok laves om til fetchall
-    cursor.close()
-    connection.close()
-    return user_data
+@app.post("/test")
+def test():
+    hej = "hej"
+    hejsa = "ejsa"
+    response_data = {
+        "test": hej,
+        "test2": hejsa
+    }
+    return response_data, status.HTTP_200_OK
 
-def fetch_user_map_data_from_database(userid):
-    connection = Repo.connect_to_database()
-    cursor = connection.cursor()
-    query = """SELECT * FROM placeholder WHERE id = %s"""
-    cursor.execute(query, (userid,))
-    user_data = cursor.fetchone()  #Skal nok laves om til fetchall
-    cursor.close()
-    connection.close()
-    return user_data
+
+
+
+
 @app.post("/get-user_stats/{userid}")
-def get_user_stats():
-    # Få JSON-data fra request'en
-    data = request.json
-
-    # Kontroller om data er til stede og indeholder det nødvendige felt
-    if data is None or "userid" not in data:
-        return jsonify({"error": "Invalid JSON data or missing userid"}), 400
-
-    userid = data["userid"]
-
+async def get_user_stats(userid: int):
     # Hent brugeroplysninger fra den simulerede database
     user_data = fetch_user_data_from_database(userid)
 
     # Kontroller om brugeren findes i databasen
     if user_data is None:
-        return jsonify({"error": "User not found"}), 404
+        raise HTTPException(status_code=404, detail="User not found")
 
     # Udtræk nødvendige oplysninger fra brugeroplysningerne
     name = user_data["name"]
@@ -75,26 +58,16 @@ def get_user_stats():
     }
 
     # Returner data som JSON
-    return jsonify(response_data), 200
+    return response_data, status.HTTP_200_OK
 
-@app.post("/get-user_singel_mapdata/{userid} {mapid}")
-def get_user_mapdata():
-    # Få JSON-data fra request'en
-    data = request.json
-
-    # Kontroller om data er til stede og indeholder det nødvendige felt
-    if data is None or "userid" not in data or "map" not in data:
-        return jsonify({"error": "Invalid JSON data or missing userid or map"}), 400
-
-    userid = data["userid"]
-    map_name = data["mapname"]
-
+@app.post("/get-user_single_mapdata/{userid}/{mapid}")
+async def get_user_mapdata(userid: int, mapid: int):
     # Hent brugeroplysninger fra den simulerede database
-    user_data = fetch_user_map_data_from_database(userid, map_name)
+    user_data = fetch_user_map_data_from_database(userid, mapid)
 
     # Kontroller om brugeren findes i databasen
     if user_data is None:
-        return jsonify({"error": "User not found"}), 404
+        raise HTTPException(status_code=404, detail="User not found")
 
     # Udtræk nødvendige oplysninger fra brugeroplysningerne
     name = user_data["name"]
@@ -115,16 +88,20 @@ def get_user_mapdata():
     t_pistol_won = user_data["TPistolRoundsWins"]
 
     # Beregn data
-
+    map_kills_mean = Analysis.player_analysis_mean2(kills, matches_played)
+    map_deaths_mean = Analysis.player_analysis_mean2(deaths, matches_played)
+    map_assists_mean = Analysis.player_analysis_mean2(assists, matches_played)
 
     # Opret svar-objekt med de modtagne data og beregnede killavg
     response_data = {
         "username": name,
-
+        "map": mapid,
+        "avg_kills": map_kills_mean,
+        "avg_deaths": map_deaths_mean,
+        "avg_assists": map_assists_mean,
     }
 
-    # Returner data som JSON
-    return jsonify(response_data), 200
+    return response_data, status.HTTP_200_OK
 
 if __name__ == "__main__":
     app.run(debug=True)

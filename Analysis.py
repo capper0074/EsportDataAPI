@@ -9,6 +9,11 @@ def player_analysis_mean(stats):
     return avg_stats
 
 
+def player_analysis_mean2(stat, total):
+
+    return total / stat
+
+
 def map_sorter(maps_played):
     maps = {
         "Mirage": 0,
