@@ -1,4 +1,5 @@
 import Analysis
+import KasperDummeDatabase
 import Repo
 
 from typing import Union
@@ -25,27 +26,25 @@ def test():
 @app.post("/get-user_stats/{userid}")
 async def get_user_stats(userid: int):
     # Hent brugeroplysninger fra den simulerede database
-    user_data = fetch_user_data_from_database(userid)
+    user_data = KasperDummeDatabase.fetch_team_player_stats(userid)
 
     # Kontroller om brugeren findes i databasen
     if user_data is None:
         raise HTTPException(status_code=404, detail="User not found")
 
     # Udtræk nødvendige oplysninger fra brugeroplysningerne
-    name = user_data["name"]
-    kills = user_data["kills"]
-    assists = user_data["assists"]
-    deaths = user_data["deaths"]
-    headshots = user_data["headshots"]
-    match_wins = user_data["Wins"]
-    match_loss = user_data["Loss"]
+    name = user_data["PlayerId"]
+    kills = user_data["Kills"]
+    assists = user_data["Assists"]
+    deaths = user_data["Deaths"]
+    headshots = user_data["Headshots"]
+
 
     # Beregn killavg
     kill_avg = Analysis.player_analysis_mean(kills)
     death_avg = Analysis.player_analysis_mean(deaths)
     assist_avg = Analysis.player_analysis_mean(assists)
     headshot_per = Analysis.player_headshot_per(kills, headshots)
-    win_per = Analysis.player_match_win_per(match_wins, match_loss)
 
     # Opret svar-objekt med de modtagne data og beregnede data
     response_data = {
@@ -53,17 +52,17 @@ async def get_user_stats(userid: int):
         "kill_avg": kill_avg,
         "death_avg": death_avg,
         "assist_avg": assist_avg,
-        "headshot_per": headshot_per,
-        "win_per": win_per
+        "headshot_per": headshot_per
+
     }
 
     # Returner data som JSON
     return response_data, status.HTTP_200_OK
 
-@app.post("/get-user_single_mapdata/{userid}/{mapid}")
-async def get_user_mapdata(userid: int, mapid: int):
+@app.post("/get-user_single_mapdata/{teamid}/{mapid}")
+async def get_user_mapdata(teamid: int, mapid: int):
     # Hent brugeroplysninger fra den simulerede database
-    user_data = fetch_user_map_data_from_database(userid, mapid)
+    user_data = KasperDummeDatabase.fetch_team_match_stats(KasperDummeDatabase.fetch_match_id(KasperDummeDatabase.fetch_match_id(mapid), teamid), teamid)
 
     # Kontroller om brugeren findes i databasen
     if user_data is None:

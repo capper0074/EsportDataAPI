@@ -25,17 +25,20 @@ def fetch_match_id_for_team(matchid, teamid):
 def fetch_team_match_stats(matchid, teamid):
     connection = Repo.connect_to_database()
     cursor = connection.cursor()
-    query = """SELECT Id FROM placeholder WHERE id = %s AND mapname = %s"""
-
-
-
-
-def fetch_user_map_data_from_database(userid):
-    connection = Repo.connect_to_database()
-    cursor = connection.cursor()
-    query = """SELECT * FROM placeholder WHERE id = %s"""
-    cursor.execute(query, (userid,))
-    user_data = cursor.fetchone()  #Skal nok laves om til fetchall
+    query = """SELECT * FROM placeholder WHERE id = %s AND mapname = %s"""
+    cursor.execute(query, (matchid, teamid))
+    team_stats = cursor.fetchall()
     cursor.close()
     connection.close()
-    return user_data
+    return team_stats
+
+
+def fetch_team_player_stats(userid): #Denne tag ikke højte for mappet, men tag istedet for hele lortet.
+    connection = Repo.connect_to_database()
+    cursor = connection.cursor()
+    query = """SELECT * FROM placeholder WHERE PlayerId = %s"""
+    cursor.execute(query, (userid))
+    user_stats = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return user_stats
