@@ -1,3 +1,5 @@
+import uuid
+
 import Analysis
 import KasperDummeDatabase
 import Repo
@@ -24,7 +26,7 @@ def test():
 
 
 @app.post("/get-user_stats/{userid}")
-async def get_user_stats(userid: int):
+async def get_user_stats(userid: uuid.UUID):
     # Hent brugeroplysninger fra den simulerede database
     user_data = KasperDummeDatabase.fetch_team_player_stats(userid)
 

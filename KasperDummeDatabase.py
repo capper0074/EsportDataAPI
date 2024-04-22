@@ -1,9 +1,10 @@
 import Repo
+import uuid
 
 def fetch_match_id(map_name):
     connection = Repo.connect_to_database()
     cursor = connection.cursor()
-    query = """SELECT Id FROM Match WHERE id = %s AND mapname = %s"""
+    query = """SELECT Id FROM Match WHERE id = %s AND mapname = ?"""
     cursor.execute(query, (map_name))
     match_id = cursor.fetchall()  #Skal nok laves om til fetchall
     cursor.close()
@@ -14,7 +15,7 @@ def fetch_match_id(map_name):
 def fetch_match_id_for_team(matchid, teamid):
     connection = Repo.connect_to_database()
     cursor = connection.cursor()
-    query = """SELECT MatchesId FROM MatchTeam WHERE MatchId = %s AND TeamsId = %s"""
+    query = """SELECT MatchesId FROM MatchTeam WHERE MatchId = %s AND TeamsId = ?"""
     cursor.execute(query, (matchid, teamid))
     team_match_id = cursor.fetchall()
     cursor.close()
@@ -25,7 +26,7 @@ def fetch_match_id_for_team(matchid, teamid):
 def fetch_team_match_stats(matchid, teamid):
     connection = Repo.connect_to_database()
     cursor = connection.cursor()
-    query = """SELECT * FROM placeholder WHERE id = %s AND mapname = %s"""
+    query = """SELECT * FROM placeholder WHERE id = %s AND mapname = ?"""
     cursor.execute(query, (matchid, teamid))
     team_stats = cursor.fetchall()
     cursor.close()
@@ -36,8 +37,9 @@ def fetch_team_match_stats(matchid, teamid):
 def fetch_team_player_stats(userid): #Denne tag ikke højte for mappet, men tag istedet for hele lortet.
     connection = Repo.connect_to_database()
     cursor = connection.cursor()
-    query = """SELECT * FROM placeholder WHERE PlayerId = %s"""
-    cursor.execute(query, (userid))
+    query = """SELECT * FROM PLAYERMATCHSTATS WHERE FKPlayerId = ?"""
+    cursor.execute(query, userid)
+
     user_stats = cursor.fetchall()
     cursor.close()
     connection.close()

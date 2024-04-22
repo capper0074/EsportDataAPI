@@ -1,13 +1,14 @@
 import pyodbc
 
-
 def connect_to_database():
-    # Erstat værdierne i connection_string med dine egne
-    connection_string = 'DRIVER={SQL Server};SERVER=server_name;DATABASE=database_name;UID=username;PWD=password'
+    server = 'temp-4sem-sqlserver.database.windows.net'
+    database = 'temp-4sem-sqldb'
+    username = 'CasperJensen'
+    password = 'Casper0098'
+    driver= '{ODBC Driver 17 for SQL Server}'
 
     try:
-        # Opret forbindelse til databasen
-        conn = pyodbc.connect(connection_string)
+        conn = pyodbc.connect('DRIVER=' + driver + ';SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
         print("Forbindelse oprettet til databasen.")
         return conn
     except pyodbc.Error as e:
