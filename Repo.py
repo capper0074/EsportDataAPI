@@ -9,7 +9,7 @@ def connect_to_database():
 
     try:
         conn = pyodbc.connect('DRIVER=' + driver + ';SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
-        print("Forbindelse oprettet til databasen.")
+        print("Forbindelse oprettet til databasen, godt gået Kasper er stolt af dig.")
         return conn
     except pyodbc.Error as e:
         print("Fejl ved oprettelse af forbindelse til databasen:", e)

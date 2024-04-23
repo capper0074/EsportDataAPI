@@ -21,10 +21,6 @@ def test():
     }
     return response_data, status.HTTP_200_OK
 
-
-
-
-
 @app.post("/get-user_stats/{userid}")
 async def get_user_stats(userid: uuid.UUID):
     # Hent brugeroplysninger fra den simulerede database
@@ -35,7 +31,7 @@ async def get_user_stats(userid: uuid.UUID):
         raise HTTPException(status_code=404, detail="User not found")
 
     # Udtræk nødvendige oplysninger fra brugeroplysningerne
-    name = user_data["PlayerId"]
+    name = int(user_data["PlayerId"])
     kills = user_data["Kills"]
     assists = user_data["Assists"]
     deaths = user_data["Deaths"]
@@ -47,6 +43,7 @@ async def get_user_stats(userid: uuid.UUID):
     death_avg = Analysis.player_analysis_mean(deaths)
     assist_avg = Analysis.player_analysis_mean(assists)
     headshot_per = Analysis.player_headshot_per(kills, headshots)
+
 
     # Opret svar-objekt med de modtagne data og beregnede data
     response_data = {
